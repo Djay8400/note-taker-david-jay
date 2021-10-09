@@ -16,12 +16,12 @@ app.use('/api', apiRoute);
 // app.use('/html', htmlRoute);
 
 
-// GET Route for homepage
+// GET Route for index page
 app.get('/', (req, res) => 
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
-// Get Route for feedback page
+// Get Route for notes page
 app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
