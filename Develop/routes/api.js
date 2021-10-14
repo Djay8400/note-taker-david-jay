@@ -1,5 +1,7 @@
 const apis = require('express').Router();
 const fs = require('fs');
+const uuid = require('../helper/uuid');
+const reviews = require('../db/db.json');
 
 // GET request for notes
 apis.get('/notes', (req, res) => {
@@ -11,11 +13,7 @@ apis.get('/notes', (req, res) => {
           const parsedNotes = JSON.parse(data);
             res.json(parsedNotes)
     
-    // Send a message to the client
-    // res.status(200).json(`${req.method} request received to get notes`);
-  
-    // Log our request to the terminal
-    // console.info(`${req.method} request received to get notes`);
+    
         }; 
   });
 });
@@ -26,7 +24,7 @@ apis.post('/notes', (req, res) => {
     console.info(`${req.method} request received to add a note`);
   
     // Destructuring assignment for the items in req.body
-    const { title, text } = req.body;
+    const { title, text, } = req.body;
   
     // If all the required properties are present
     if (title && text) {
@@ -34,6 +32,7 @@ apis.post('/notes', (req, res) => {
       const newReview = {
         title,
         text,
+        id: uuid(),
       };
   
       // Obtain existing notes
@@ -69,4 +68,32 @@ apis.post('/notes', (req, res) => {
     }
   });
 
+  apis.delete('/notes/:id', (req, res) => {
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+          console.error(err);
+        } else {
+          // Convert string into JSON object
+          const parsedNotes = JSON.parse(data);
+          const notesId = req.params.id;
+
+          for (let i = 0; i < parsedNotes.length; i++) {
+            const currentNote = parsedNotes[i];
+            if (currentNote.id === notesId) {
+              console.log(parsedNotes.splice(i, 1))
+              
+            }
+          }
+          fs.writeFile('./db/db.json',JSON.stringify(parsedNotes, null, 2),
+            (writeErr) =>
+              writeErr
+                ? console.error(writeErr)
+                : console.info('Successfully updated notes!')
+          );
+        res.json(parsedNotes)
+      };
+  });
+});
   module.exports = apis;
+
+ 

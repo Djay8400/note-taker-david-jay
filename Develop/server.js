@@ -3,7 +3,7 @@ const path = require('path');
 const apiRoute = require('./routes/api.js')
 const htmlRoute = require('./routes/html.js')
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
@@ -15,7 +15,17 @@ app.use(express.static('public'));
 app.use('/api', apiRoute);
 // app.use('/html', htmlRoute);
 
-
+app.get('/api/notes', (req, res) => {
+  fs.readFile(path.join(__dirname, './db/db.json', 'utf8'), (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // Convert string into JSON object
+        const parsedNotes = JSON.parse(data);
+          res.json(parsedNotes)
+        }; 
+      });
+    });
 // GET Route for index page
 app.get('/', (req, res) => 
   res.sendFile(path.join(__dirname, '/public/index.html'))
